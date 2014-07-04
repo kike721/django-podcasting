@@ -56,20 +56,29 @@ class ITunesElements(object):
             elif easy_thumbnails:
                 aliases = settings.THUMBNAIL_ALIASES["podcasting.Show.original_image"]
                 thumbnailer = easy_thumbnails.files.get_thumbnailer(show.original_image)
-                itunes_sm_url = thumbnailer.get_thumbnail(aliases["itunes_sm"]).url
-                itunes_lg_url = thumbnailer.get_thumbnail(aliases["itunes_lg"]).url
+                try:
+                    itunes_sm_url = thumbnailer.get_thumbnail(aliases["itunes_sm"]).url
+                    itunes_lg_url = thumbnailer.get_thumbnail(aliases["itunes_lg"]).url
+                except easy_thumbnails.exceptions.InvalidImageFormatError:
+                    easy_thumbnails.signal_handlers.generate_aliases_global(show.original_image)
+                    itunes_sm_url = thumbnailer.get_thumbnail(aliases["itunes_sm"]).url
+                    itunes_lg_url = thumbnailer.get_thumbnail(aliases["itunes_lg"]).url
+                except AttributeError:
+                    itunes_sm_url = None
+                    itunes_lg_url = None
             elif sorl:
                 itunes_sm_url = sorl.thumbnail.get_thumbnail(show.original_image, "144x144").url
                 itunes_lg_url = sorl.thumbnail.get_thumbnail(show.original_image, "1400x1400").url
             else:
                 itunes_sm_url = show.original_image.url
                 itunes_lg_url = show.original_image.url
-            handler.addQuickElement("itunes:image", attrs={"href": itunes_lg_url})
-            handler.startElement("image", {})
-            handler.addQuickElement("url", itunes_sm_url)
-            handler.addQuickElement("title", self.feed["title"])
-            handler.addQuickElement("link", self.feed["link"])
-            handler.endElement("image")
+            if itunes_sm_url and itunes_lg_url:
+                handler.addQuickElement("itunes:image", attrs={"href": itunes_lg_url})
+                handler.startElement("image", {})
+                handler.addQuickElement("url", itunes_sm_url)
+                handler.addQuickElement("title", self.feed["title"])
+                handler.addQuickElement("link", self.feed["link"])
+                handler.endElement("image")
 
         handler.addQuickElement("guid", str(show.uuid), attrs={"isPermaLink": "false"})
         handler.addQuickElement("itunes:subtitle", self.feed["subtitle"])
@@ -108,20 +117,29 @@ class ITunesElements(object):
             elif easy_thumbnails:
                 aliases = settings.THUMBNAIL_ALIASES["podcasting.Episode.original_image"]
                 thumbnailer = easy_thumbnails.files.get_thumbnailer(episode.original_image)
-                itunes_sm_url = thumbnailer.get_thumbnail(aliases["itunes_sm"]).url
-                itunes_lg_url = thumbnailer.get_thumbnail(aliases["itunes_lg"]).url
+                try:
+                    itunes_sm_url = thumbnailer.get_thumbnail(aliases["itunes_sm"]).url
+                    itunes_lg_url = thumbnailer.get_thumbnail(aliases["itunes_lg"]).url
+                except easy_thumbnails.exceptions.InvalidImageFormatError:
+                    easy_thumbnails.signal_handlers.generate_aliases_global(episode.original_image)
+                    itunes_sm_url = thumbnailer.get_thumbnail(aliases["itunes_sm"]).url
+                    itunes_lg_url = thumbnailer.get_thumbnail(aliases["itunes_lg"]).url
+                except AttributeError:
+                    itunes_sm_url = None
+                    itunes_lg_url = None
             elif sorl:
                 itunes_sm_url = sorl.thumbnail.get_thumbnail(episode.original_image, "144x144").url
-                itunes_lg_url = sorl.thumbnail.get_thumbnail(episode.original_image, "1400x1400").url
+                itunes_lg_url = sorl.thumbnail.get_thumbnail(episode.original_image, "1400x1400").url  # noqa
             else:
                 itunes_sm_url = episode.original_image.url
                 itunes_lg_url = episode.original_image.url
-            handler.addQuickElement("itunes:image", attrs={"href": itunes_lg_url})
-            handler.startElement("image", {})
-            handler.addQuickElement("url", itunes_sm_url)
-            handler.addQuickElement("title", episode.title)
-            handler.addQuickElement("link", episode.get_absolute_url())
-            handler.endElement("image")
+            if itunes_sm_url and itunes_lg_url:
+                handler.addQuickElement("itunes:image", attrs={"href": itunes_lg_url})
+                handler.startElement("image", {})
+                handler.addQuickElement("url", itunes_sm_url)
+                handler.addQuickElement("title", episode.title)
+                handler.addQuickElement("link", episode.get_absolute_url())
+                handler.endElement("image")
 
         handler.addQuickElement("guid", str(episode.uuid), attrs={"isPermaLink": "false"})
         if licenses:
@@ -281,16 +299,15 @@ class AtomRedirectView(RedirectView):
     permanent = False
 
     def get_redirect_url(self, show_slug, mime_type):
-        return reverse('podcasts_show_feed_atom', kwargs={
-                                                'show_slug':show_slug,
-                                                'mime_type':mime_type})
-
+        return reverse(
+            "podcasts_show_feed_atom",
+            kwargs={"show_slug": show_slug, "mime_type": mime_type})
 
 
 class RssRedirectView(RedirectView):
     permanent = False
 
     def get_redirect_url(self, show_slug, mime_type):
-        return reverse('podcasts_show_feed_rss', kwargs={
-                                                'show_slug':show_slug,
-                                                'mime_type':mime_type})
+        return reverse(
+            "podcasts_show_feed_rss",
+            kwargs={"show_slug": show_slug, "mime_type": mime_type})

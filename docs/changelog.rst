@@ -3,6 +3,19 @@ Changelog
 
 master
 ------
+
+0.9.10
+------
+- setting FEED_ENTRIES hides older episodes, use None (aka all) as default.
+- more forgiving error handling on images in feeds.
+
+0.9.9
+------
+- Add django-appconf to required packages
+- RedirectView fixes - kike721
+- Spanish translations - kike721
+- Use AppConf for pagination settings - kike721
+- Enforce that feed urls can only request supported mime types.
 - Make feed_urs more generic by removing /itunes/. Redirect old style.
 - Make django-licenses optional
 - Drop bundled AutoSlug and use django-autoslug
