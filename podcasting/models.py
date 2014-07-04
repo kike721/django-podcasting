@@ -12,7 +12,6 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
-
 from django.contrib.sites.models import Site
 
 # until the 1.4 shim is released
@@ -369,7 +368,7 @@ class Episode(models.Model):
 
     def __str__(self):
         return self.title
-
+                
     def get_absolute_url(self):
         return reverse("podcasting_episode_detail",
                        kwargs={"show_slug": self.show.slug, "slug": self.slug})
@@ -415,7 +414,7 @@ class Episode(models.Model):
         return self.title
 
     def get_share_description(self):
-        return "{0}...".format(self.description[:512])
+        return u"{0}...".format(self.description[:512])
 
 
 @python_2_unicode_compatible
@@ -473,7 +472,7 @@ class Enclosure(models.Model):
         verbose_name_plural = _("Enclosures")
 
     def __str__(self):
-        return "{} - {}".format(self.episode, self.mime)
+        return u"{} - {}".format(self.episode, self.mime)
 
 
 @python_2_unicode_compatible
@@ -501,4 +500,4 @@ class EmbedMedia(models.Model):
         verbose_name_plural = _("Embed Media URLs")
 
     def __str__(self):
-        return "{} - {}".format(self.episode, self.url)
+        return u"{} - {}".format(self.episode, self.url)

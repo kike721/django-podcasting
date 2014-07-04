@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: podcasting\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-06-20 11:35-0500\n"
-"PO-Revision-Date: 2014-06-20 15:51-0600\n"
+"PO-Revision-Date: 2014-07-04 12:31-0600\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: ES <LL@li.org>\n"
 "Language: es\n"
@@ -466,7 +466,7 @@ msgstr ""
 
 #: models.py:358
 msgid "block"
-msgstr "bloque"
+msgstr "bloquear"
 
 #: models.py:359
 msgid ""
@@ -642,7 +642,7 @@ msgstr "No existe tal Podcast."
 #: templates/podcasting/_show_list.html:4
 #: templates/podcasting/show_list.html:5
 msgid "Podcast Shows"
-msgstr "Podcast"
+msgstr "Podcasts"
 
 #: templates/podcasting/_show_list.html:17
 msgid "There are no shows."
