@@ -9,12 +9,12 @@ class ShowListView(ListView):
     paginate_by = settings.PODCASTING_PAGINATE_BY
 
     def get_queryset(self):
-        return Show.objects.onsite()
+        return Show.objects.onsite().published()
 
 
 class ShowDetailView(DetailView):
     def get_queryset(self):
-        return Show.objects.onsite()
+        return Show.objects.onsite().published()
 
 
 class EpisodeListView(ListView):
